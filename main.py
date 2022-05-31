@@ -1,23 +1,18 @@
 from pytube import YouTube
 import sys
-import os
 
 from pytube.exceptions import VideoUnavailable
 
 DOWNLOAD_FOLDER = 'yt_downloader'
 
 
-def cls():
-    os.system('cls' if os.name == 'nt' else 'clear')
-
-
 def progress_func(stream, data_chunk, bytes_remaining):
-    print(stream.filesize)
-    print(bytes_remaining)
+    bytes_received = stream.filesize - bytes_remaining
+    print(f'{int((100 * bytes_received / stream.filesize)) }%')
 
 
 def download_complete(stream, file_path):
-    print_cli(f'Video downloaded successfully on {file_path}', 'success')
+    print_cli(f'Video successfully downloaded on {file_path}', 'success')
 
 
 def download_yt_video(video_url):
@@ -27,8 +22,8 @@ def download_yt_video(video_url):
                      on_complete_callback=download_complete)
 
         print_cli(f'downloading video: "{yt.title}"...')
-        if yt.length > 600:
-            raise Exception('The video needs to have less than 10 minutes length')
+        # if yt.length > 600:
+        #     raise Exception('The video needs to have less than 10 minutes length')
         yt \
             .streams \
             .filter(progressive=True, file_extension='mp4') \
@@ -57,7 +52,6 @@ def print_cli(text, message_type=''):
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        cls()
         print_cli('please, specify the video_url argument', 'error')
     else:
         download_yt_video(sys.argv[1])
