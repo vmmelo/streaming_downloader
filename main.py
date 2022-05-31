@@ -12,7 +12,7 @@ def cls():
 def download_yt_video(video_url):
     try:
         yt = YouTube(video_url)
-        print_cli(f'downloading video: {yt.title}')
+        print_cli(f'downloading video: "{yt.title}"...')
         if yt.length > 600:
             raise Exception('The video needs to have less than 10 minutes length')
         yt \
@@ -29,13 +29,15 @@ def download_yt_video(video_url):
 
 
 def print_cli(text, message_type=''):
-    r = 0
-    g = 0
-    b = 0
+    r = 255
+    g = 255
+    b = 255
     if message_type == 'error':
-        r = 255
+        g = 0
+        b = 0
     elif message_type == 'success':
-        g = 255
+        r = 0
+        b = 0
     return print("\033[38;2;{};{};{}m{} \033[38;2;255;255;255m".format(r, g, b, text))
 
 
