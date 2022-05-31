@@ -1,14 +1,22 @@
 from pytube import YouTube
 import sys
+import colorama
 
 from pytube.exceptions import VideoUnavailable
 
 DOWNLOAD_FOLDER = 'yt_downloader'
 
 
+def draw_progress(progress, total, color=colorama.Fore.YELLOW):
+    sys.stdout.flush()
+    percent = 100 * (progress / float(total))
+    bar = '█' * int(percent / 2) + '-' * int((100 - percent) / 2)
+    print_cli(color + f"|{bar}| {percent:.2f}%", message_type='progress', end='\r')
+
+
 def progress_func(stream, data_chunk, bytes_remaining):
     bytes_received = stream.filesize - bytes_remaining
-    print(f'{int((100 * bytes_received / stream.filesize)) }%')
+    draw_progress(bytes_received, stream.filesize)
 
 
 def download_complete(stream, file_path):
@@ -37,17 +45,15 @@ def download_yt_video(video_url):
         print_cli(e, 'error')
 
 
-def print_cli(text, message_type=''):
-    r = 255
-    g = 255
-    b = 255
+def print_cli(text, message_type='', end='\n'):
+    color = colorama.Fore.WHITE
     if message_type == 'error':
-        g = 0
-        b = 0
+        color = colorama.Fore.RED
     elif message_type == 'success':
-        r = 0
-        b = 0
-    return print("\033[38;2;{};{};{}m{} \033[38;2;255;255;255m".format(r, g, b, text))
+        color = colorama.Fore.GREEN
+    elif message_type == 'progress':
+        color = colorama.Fore.YELLOW
+    return print(color + text, end=end)
 
 
 if __name__ == '__main__':
