@@ -2,14 +2,14 @@ import re
 import sys
 import os
 
-import twitchDownloader
-import youtubeDownloader
+from services import youtubeDownloader, twitchDownloader
 from cliHelper import print_cli
 from constants import YOUTUBE_REGEX, TWITCH_REGEX
 
 
 def cls():
     os.system('cls' if os.name == 'nt' else 'clear')
+
 
 def getService(url):
     if re.search(YOUTUBE_REGEX, url):

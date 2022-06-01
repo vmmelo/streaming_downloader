@@ -3,12 +3,15 @@ from pytube import YouTube
 from cliHelper import print_cli, draw_progress
 from constants import DOWNLOAD_FOLDER
 
+
 def progress_func(stream, data_chunk, bytes_remaining):
     bytes_received = stream.filesize - bytes_remaining
     draw_progress(bytes_received, stream.filesize)
 
+
 def download_complete(stream, file_path):
     print_cli(f'Video successfully downloaded on {file_path}', 'success')
+
 
 def download(video_url):
     try:
@@ -29,4 +32,4 @@ def download(video_url):
     except VideoUnavailable:
         print(f'Video {video_url} is unavaialable, skipping.')
     except Exception as e:
-        print_cli(e, 'error')
+        print_cli(str(e), 'error')

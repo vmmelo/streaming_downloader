@@ -1,19 +1,18 @@
-from pytube.exceptions import VideoUnavailable
-from cliHelper import print_cli
+import os
+from cliHelper import print_cli, draw_progress
+from common import create_folder_if_not_exists
 from constants import DOWNLOAD_FOLDER
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.common.by import By
 from time import sleep
 import urllib.request
-from pathlib import Path
+
 
 def setDriver(video_url):
     op = webdriver.FirefoxOptions()
     op.add_argument('--headless')
-    service = Service(executable_path="./geckodriver.exe")
+    service = Service()
     driver = webdriver.Firefox(service=service, options=op)
     driver.set_window_position(0, 0)
     driver.set_window_size(1920, 1080)
@@ -21,8 +20,13 @@ def setDriver(video_url):
     sleep(5)
     return driver
 
-def create_folder_if_not_exists():
-    Path(DOWNLOAD_FOLDER).mkdir(parents=True, exist_ok=True)
+
+def progress_func(block_num, block_size, total_size):
+    received = block_num * block_size
+    if received > total_size:
+        received = total_size
+    draw_progress(received, total_size)
+
 
 def download(video_url):
     try:
@@ -35,6 +39,8 @@ def download(video_url):
                                             "1]/a/h1").text
         print_cli(f'downloading video: "{streamer_name}/{clip_title}"...')
         create_folder_if_not_exists()
-        urllib.request.urlretrieve(clip_url, f'{DOWNLOAD_FOLDER}/{streamer_name}_{clip_title}.mp4')
+        urllib.request.urlretrieve(clip_url, f'{DOWNLOAD_FOLDER}/{streamer_name}_{clip_title}.mp4', progress_func)
+        print_cli(f'Video successfully downloaded on '
+                  f'{os.path.join(os.getcwd(), DOWNLOAD_FOLDER, streamer_name + "_" + clip_title + ".mp4")}', 'success')
     except Exception as e:
-        print_cli(e, 'error')
+        print_cli(str(e), 'error')
