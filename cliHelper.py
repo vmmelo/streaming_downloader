@@ -1,11 +1,20 @@
-def print_cli(text, message_type=''):
-    r = 255
-    g = 255
-    b = 255
+import sys
+import colorama
+
+
+def draw_progress(progress, total, color=colorama.Fore.YELLOW):
+    sys.stdout.flush()
+    percent = 100 * (progress / float(total))
+    bar = '█' * int(percent / 2) + '-' * int((100 - percent) / 2)
+    print_cli(color + f"|{bar}| {percent:.2f}%", message_type='progress', end='\r')
+
+
+def print_cli(text, message_type='', end='\n'):
+    color = colorama.Fore.WHITE
     if message_type == 'error':
-        g = 0
-        b = 0
+        color = colorama.Fore.RED
     elif message_type == 'success':
-        r = 0
-        b = 0
-    return print("\033[38;2;{};{};{}m{} \033[38;2;255;255;255m".format(r, g, b, text))
+        color = colorama.Fore.GREEN
+    elif message_type == 'progress':
+        color = colorama.Fore.YELLOW
+    return print(color + text, end=end)
