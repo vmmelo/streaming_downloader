@@ -1,5 +1,9 @@
-# Youtube video downloader
-A CLI app to download youtube videos and twitch clips
+# Streaming video downloader
+A CLI app to download streaming videos
+
+### Supported services
+- Youtube
+- Twitch
 
 ### Requirements
 - python installed
